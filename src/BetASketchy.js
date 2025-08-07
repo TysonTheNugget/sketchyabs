@@ -31,7 +31,6 @@ function BetASketchy() {
   const [prevOpenGameIds, setPrevOpenGameIds] = useState([]);
   const [resolvingGames, setResolvingGames] = useState([]);
 
-
   // Fetch NFTs owned by the connected wallet
   const { data: tokenIds, error: nftError, isLoading: nftLoading, refetch: refetchTokenIds } = useReadContract({
     address: '0x08533A2b16e3db03eeBD5b23210122f97dfcb97d',
@@ -62,13 +61,23 @@ function BetASketchy() {
   });
 
   // Check if CoinFlipGame is approved to transfer NFTs
-  const { data: isApproved, error: approvalError } = useReadContract({
+  const { data: isApproved, error: approvalError, refetch: refetchApproval } = useReadContract({
     address: '0x08533A2b16e3db03eeBD5b23210122f97dfcb97d',
     abi: NFT_ABI,
     functionName: 'isApprovedForAll',
     args: [address, '0xf6b8d2E0d36669Ed82059713BDc6ACfABe11Fde6'],
     query: { enabled: isConnected && !!address },
   });
+
+  // Simulate approveAll (setApprovalForAll)
+  const { data: simulateApproveAllData, error: simulateApproveError } = useSimulateContract({
+    address: '0x08533A2b16e3db03eeBD5b23210122f97dfcb97d',
+    abi: NFT_ABI,
+    functionName: 'setApprovalForAll',
+    args: ['0xf6b8d2E0d36669Ed82059713BDc6ACfABe11Fde6', true],
+    enabled: isConnected && !isApproved,
+  });
+  const { writeContract: approveAll, isPending: isApproving } = useWriteContract();
 
   // Prepare contract write for creating a game
   const { data: simulateCreateData, error: simulateCreateError } = useSimulateContract({
@@ -89,6 +98,20 @@ function BetASketchy() {
     enabled: isConnected && selectedGameId != null && selectedNft != null && isApproved && !!address,
   });
   const { writeContract: joinGame } = useWriteContract();
+
+  // Handle approve all action
+  const handleApproveAll = () => {
+    if (simulateApproveAllData?.request) {
+      approveAll(simulateApproveAllData.request, {
+        onSuccess: () => {
+          refetchApproval();
+        },
+        onError: () => {
+          // Handle error if needed
+        },
+      });
+    }
+  };
 
   // Sync createdGames with openGameIds
   useEffect(() => {
@@ -238,21 +261,21 @@ function BetASketchy() {
     }, 30000);
     return () => clearInterval(interval);
   }, [address, isConnected, refetchOpenGames]);
-  
+
   useEffect(() => {
-  // Any game that was in joinedGames/createdGames,
-  // is no longer in openGameIds, and NOT in notifications,
-  // should be considered "resolving"
-  const currentlyResolving = [
-    ...createdGames,
-    ...joinedGames
-  ].filter(
-    (gameId) =>
-      !openGameIds?.includes(gameId) &&
-      !notifications.some((n) => n.gameId === gameId.toString())
-  );
-  setResolvingGames(currentlyResolving);
-}, [openGameIds, notifications, createdGames, joinedGames]);
+    // Any game that was in joinedGames/createdGames,
+    // is no longer in openGameIds, and NOT in notifications,
+    // should be considered "resolving"
+    const currentlyResolving = [
+      ...createdGames,
+      ...joinedGames
+    ].filter(
+      (gameId) =>
+        !openGameIds?.includes(gameId) &&
+        !notifications.some((n) => n.gameId === gameId.toString())
+    );
+    setResolvingGames(currentlyResolving);
+  }, [openGameIds, notifications, createdGames, joinedGames]);
 
   const handleSelectNft = (tokenId) => {
     setSelectedNft(BigInt(tokenId));
@@ -332,6 +355,7 @@ function BetASketchy() {
         {nftError && <p className="text-red-500 text-sm">Error fetching NFTs: {nftError.message}</p>}
         {createError && <p className="text-red-500 text-sm">Error creating game: {createError.message}</p>}
         {approvalError && <p className="text-red-500 text-sm">Error checking approval: {approvalError.message}</p>}
+        {simulateApproveError && <p className="text-red-500 text-sm">Error simulating approval: {simulateApproveError.message}</p>}
         <ActionButtons
           isConnected={isConnected}
           isApproved={isApproved}
@@ -343,6 +367,8 @@ function BetASketchy() {
           handleCreateGame={handleCreateGame}
           handleRefreshGames={handleRefreshGames}
           setIsNftModalOpen={setIsNftModalOpen}
+          handleApproveAll={handleApproveAll}
+          isApproving={isApproving}
         />
         <OpenGames
           openGameIds={openGameIds}
@@ -357,7 +383,7 @@ function BetASketchy() {
           joinedGames={joinedGames}
           createdGames={createdGames}
           onViewHistory={handleViewHistory}
-		  resolvingGames={resolvingGames}
+          resolvingGames={resolvingGames}
         />
       </div>
       {/* Modals outside main card */}
