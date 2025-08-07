@@ -44,7 +44,7 @@ const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning, s
         <div className="modal-content max-w-md p-4 bg-image-box">
           <h2 className="neon-text text-xl mb-2">Warning</h2>
           <p className="neon-text text-xl mb-2">
-            This contract is not officially verified with Abstract. DYOR—Abstract may flag this address as malicious (a known issue). Study the contract details promoted on our socials.
+            This contract is verified on <a href="https://abscan.org/address/0xf6b8d2E0d36669Ed82059713BDc6ACfABe11Fde6#code" target="_blank" rel="noopener noreferrer" className="underline text-blue-400 hover:text-blue-600">ABS</a>. However, always conduct your own research (DYOR). Abstract may flag this address as malicious due to a known issue. Review the contract details shared on our official social channels for more information.
           </p>
           <button
             className="neon-button w-full text-sm py-1 px-2"
