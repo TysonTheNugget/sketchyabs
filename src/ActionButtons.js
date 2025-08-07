@@ -11,8 +11,6 @@ function ActionButtons({
   handleCreateGame,
   handleRefreshGames,
   setIsNftModalOpen,
-  handleApproveAll,
-  isApproving,
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -22,15 +20,6 @@ function ActionButtons({
       >
         Select a Sketchy
       </button>
-      {!isApproved && (
-        <button
-          className="neon-button bg-blue-500"
-          onClick={handleApproveAll}
-          disabled={isApproving}
-        >
-          {isApproving ? 'Approving...' : 'Approve Contract'}
-        </button>
-      )}
       <button
         className="neon-button"
         onClick={handleCreateGame}

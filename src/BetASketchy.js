@@ -30,6 +30,7 @@ function BetASketchy() {
   const [createdGames, setCreatedGames] = useState([]);
   const [prevOpenGameIds, setPrevOpenGameIds] = useState([]);
   const [resolvingGames, setResolvingGames] = useState([]);
+  const [showApprovalPrompt, setShowApprovalPrompt] = useState(false);
 
   // Fetch NFTs owned by the connected wallet
   const { data: tokenIds, error: nftError, isLoading: nftLoading, refetch: refetchTokenIds } = useReadContract({
@@ -75,7 +76,7 @@ function BetASketchy() {
     abi: NFT_ABI,
     functionName: 'setApprovalForAll',
     args: ['0xf6b8d2E0d36669Ed82059713BDc6ACfABe11Fde6', true],
-    enabled: isConnected && !isApproved,
+    enabled: isConnected && !isApproved && showApprovalPrompt,
   });
   const { writeContract: approveAll, isPending: isApproving } = useWriteContract();
 
@@ -105,9 +106,10 @@ function BetASketchy() {
       approveAll(simulateApproveAllData.request, {
         onSuccess: () => {
           refetchApproval();
+          setShowApprovalPrompt(false);
         },
         onError: () => {
-          // Handle error if needed
+          setShowApprovalPrompt(false);
         },
       });
     }
@@ -118,9 +120,9 @@ function BetASketchy() {
     if (openGameIds && createdGames.includes(0n)) {
       const newGameIds = openGameIds.filter((id) => !prevOpenGameIds.includes(id));
       if (newGameIds.length > 0) {
-        const latestGameId = newGameIds[newGameIds.length - 1]; // Assume latest is the new game
+        const latestGameId = newGameIds[newGameIds.length - 1];
         setCreatedGames((prev) => [...prev.filter((id) => id !== 0n), latestGameId]);
-        setSelectedNft(null); // Clear selected NFT for creator
+        setSelectedNft(null);
       }
       setPrevOpenGameIds(openGameIds || []);
     }
@@ -133,7 +135,7 @@ function BetASketchy() {
         notifications.some((notif) => notif.gameId === gameId.toString())
       );
       if (hasResolvedGame) {
-        setSelectedNft(null); // Clear selected NFT for joiner
+        setSelectedNft(null);
       }
     }
   }, [notifications, joinedGames]);
@@ -263,9 +265,6 @@ function BetASketchy() {
   }, [address, isConnected, refetchOpenGames]);
 
   useEffect(() => {
-    // Any game that was in joinedGames/createdGames,
-    // is no longer in openGameIds, and NOT in notifications,
-    // should be considered "resolving"
     const currentlyResolving = [
       ...createdGames,
       ...joinedGames
@@ -283,6 +282,11 @@ function BetASketchy() {
     setJoinGameStatus(null);
     setJoinGameError(null);
     setVideoError(null);
+    if (!isApproved) {
+      setShowApprovalPrompt(true);
+    } else {
+      setShowApprovalPrompt(false);
+    }
   };
 
   const handleCreateGame = () => {
@@ -290,7 +294,7 @@ function BetASketchy() {
       createGame(simulateCreateData.request, {
         onSuccess: () => {
           setCreateGameStatus('success');
-          setCreatedGames((prev) => [...prev, 0n]); // Use 0n as placeholder
+          setCreatedGames((prev) => [...prev, 0n]);
           refetchOpenGames();
           refetchTokenIds();
         },
@@ -367,8 +371,6 @@ function BetASketchy() {
           handleCreateGame={handleCreateGame}
           handleRefreshGames={handleRefreshGames}
           setIsNftModalOpen={setIsNftModalOpen}
-          handleApproveAll={handleApproveAll}
-          isApproving={isApproving}
         />
         <OpenGames
           openGameIds={openGameIds}
@@ -386,7 +388,6 @@ function BetASketchy() {
           resolvingGames={resolvingGames}
         />
       </div>
-      {/* Modals outside main card */}
       <HistoryModal
         isHistoryOpen={isHistoryOpen}
         notifications={notifications}
@@ -407,8 +408,14 @@ function BetASketchy() {
           tokenIds={tokenIds || []}
           selectedNfts={selectedNft ? [selectedNft] : []}
           onSelectNft={handleSelectNft}
-          onClose={() => setIsNftModalOpen(false)}
+          onClose={() => {
+            setIsNftModalOpen(false);
+            setShowApprovalPrompt(false);
+          }}
           showWarning={!isApproved}
+          showApprovalPrompt={showApprovalPrompt}
+          handleApproveAll={handleApproveAll}
+          isApproving={isApproving}
         />
       )}
     </div>

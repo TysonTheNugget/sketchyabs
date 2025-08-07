@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 
-const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning }) => {
+const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning, showApprovalPrompt, handleApproveAll, isApproving }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
   const [isWarningVisible, setIsWarningVisible] = useState(showWarning);
+  const [isApprovalPromptVisible, setIsApprovalPromptVisible] = useState(showApprovalPrompt);
 
   useEffect(() => {
     if (tokenIds !== undefined) {
@@ -12,6 +13,11 @@ const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning })
       setIsLoading(false);
     }
   }, [tokenIds]);
+
+  useEffect(() => {
+    setIsWarningVisible(showWarning);
+    setIsApprovalPromptVisible(showApprovalPrompt);
+  }, [showWarning, showApprovalPrompt]);
 
   const handleImageError = (tokenId) => {
     setImageErrors((prev) => ({
@@ -22,7 +28,14 @@ const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning })
 
   const handleSelect = (tokenId) => {
     onSelectNft(tokenId);
-    onClose();
+    if (!showApprovalPrompt) {
+      onClose();
+    }
+  };
+
+  const handleApproveAndSelect = (tokenId) => {
+    handleApproveAll();
+    onSelectNft(tokenId);
   };
 
   return (
@@ -41,7 +54,30 @@ const NftModal = ({ tokenIds, selectedNfts, onSelectNft, onClose, showWarning })
           </button>
         </div>
       )}
-      {!isWarningVisible && (
+      {!isWarningVisible && isApprovalPromptVisible && (
+        <div className="modal-content max-w-md p-4 bg-image-box">
+          <h2 className="neon-text text-xl mb-2">Approve Contract</h2>
+          <p className="neon-text text-xl mb-2">
+            You need to approve the contract to allow it to transfer your NFTs.
+          </p>
+          <div className="flex justify-between items-center mb-2">
+            <button
+              className="neon-button text-sm py-1 px-2"
+              onClick={() => handleApproveAndSelect(selectedNfts[0] || tokenIds[0])}
+              disabled={isApproving}
+            >
+              {isApproving ? 'Approving...' : 'Approve Contract'}
+            </button>
+            <button
+              className="neon-button bg-gray-500 text-sm py-1 px-2"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      {!isWarningVisible && !isApprovalPromptVisible && (
         <div className="modal-content max-w-md p-4 bg-image-box">
           <div className="flex justify-between items-center mb-2">
             <h2 className="neon-text text-xl mb-2">Select to join/create game</h2>
