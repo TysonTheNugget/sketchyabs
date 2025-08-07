@@ -1,0 +1,15 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true, // Enables BigInt and other modern JS features
+    "node": true
+  },
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "plugin:react-hooks/recommended"
+  ],
+  "rules": {
+    "no-undef": "error"
+  }
+}

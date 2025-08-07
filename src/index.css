@@ -1,13 +1,348 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+    background-image: url('/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: linear-gradient(to bottom, #1a202c, #2d3748); /* Fallback */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    color: #fff;
+}
+@media (max-width: 768px) {
+    html, body {
+        overflow-y: auto;
+    }
+    #gameInterface {
+        max-width: 100vw;
+        padding: 0.25rem;
+    }
+    .game-card {
+        padding: 0.5rem;
+    }
+    .modal-content {
+        margin: 10% auto;
+        padding: 0.5rem;
+    }
+}
+@media (max-width: 480px) {
+    .neon-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    .game-card {
+        padding: 0.5rem;
+    }
+    #gameInterface {
+        padding: 0.25rem;
+    }
+}
+.neon-button {
+    background: linear-gradient(to bottom, #ffeb3b, #ffc107);
+    color: black;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-font-smoothing: antialiased;
+}
+.neon-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    background: linear-gradient(to bottom, #fff59d, #ffb74d);
+}
+.neon-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.game-card {
+    background: linear-gradient(to bottom right, #ffffff, #f5f5f5);
+    border-radius: 0.5rem;
+    border: 1px solid #ff9800;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    text-align: left;
+    padding: 0.5rem;
+}
+.game-card:hover {
+    transform: translateY(-2px);
+}
+.game-open {
+    border: 2px solid #3b82f6;
+}
+.game-creating {
+    border: 2px solid #8b5cf6;
+    opacity: 0.6;
+}
+.game-resolving {
+    border: 2px solid #ec4899;
+    opacity: 0.6;
+}
+.game-completed {
+    border: 2px solid #22c55e;
+}
+.modal {
+    position: fixed;
+    z-index: 50;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 20px;
+}
+.modal-content {
+    background-color: transparent !important;
+    margin: 5% auto;
+    padding: 0.75rem;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 0.5rem;
+    border: 1px solid #ff9800;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 51;
+    color: #fff;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+}
+.nft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+    pointer-events: auto;
+}
+.nft-item {
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease;
+    pointer-events: auto;
+    z-index: 52;
+}
+.nft-item:hover {
+    transform: scale(1.05);
+}
+.nft-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid #ff9800;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+#videoOverlay {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 70;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+#videoOverlay.fade-in {
+    opacity: 1;
+}
+#videoOverlay.fade-out {
+    opacity: 0;
+}
+.game-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 1s ease-in-out infinite;
+}
+.status-pulse {
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+#loadingScreen.show {
+    opacity: 1;
+}
+#loadingScreen.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+#loadingText {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff9800;
+    animation: fadeText 1.5s infinite;
+    border: 2px solid #ff9800;
+    padding: 8px;
+    border-radius: 0.5rem;
+}
+@keyframes fadeText {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+#openGamesList {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ff9800 #2d3748;
+    border-radius: 0.5rem;
+    border: 1px solid #ff9800;
+    backgroundAREST: #ffffff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+}
+#openGamesList::-webkit-scrollbar {
+    width: 6px;
+}
+#openGamesList::-webkit-scrollbar-track {
+    background: #2d3748;
+    border-radius: 4px;
+}
+#openGamesList::-webkit-scrollbar-thumb {
+    background: #ff9800;
+    border-radius: 4px;
+}
+#resultsButton {
+    position: fixed;
+    bottom: 12px;
+    right: 100px;
+    background: linear-gradient(to right, #ff0000, #ff4500);
+    color: white;
+    font-weight: bold;
+    border-radius: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    z-index: 80;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    pointer-events: auto;
+}
+#resultsButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 69, 0, 0.5);
+}
+#resultsNotification {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+#resultsModalList {
+    max-height: 250px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ff9800 #2d3748;
+}
+#resultsModalList::-webkit-scrollbar {
+    width: 6px;
+}
+#resultsModalList::-webkit-scrollbar-track {
+    background: #2d3748;
+    border-radius: 4px;
+}
+#resultsModalList::-webkit-scrollbar-thumb {
+    background: #ff9800;
+    border-radius: 4px;
+}
+#animationNFTs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+#animationNFTs img {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.5rem;
+    border: 1px solid #ff9800;
+}
+#gameInterface {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+.text-red-500 {
+    color: #ff4500;
+    text-shadow: 0 0 5px rgba(255, 69, 0, 0.5);
+}
+.yellow-info {
+    background: linear-gradient(to bottom, #ffeb3b, #ffc107);
+    color: #222;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.13);
+    margin: 0.25rem 0;
+    border: 1px solid #ff9800;
+    text-align: center;
+    font-size: 0.95rem;
+}
+.bg-image-box {
+    background-image: url('/background2.jpg'); /* your image path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent !important;
+}
+.neon-text {
+    color: #fff;
+    font-weight: bold;
+    text-shadow:
+      0 0 8px #00e0ff,
+      0 0 20px #1976d2,
+      1px 1px 2px #fff;
 }
