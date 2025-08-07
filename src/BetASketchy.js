@@ -107,9 +107,11 @@ function BetASketchy() {
         onSuccess: () => {
           refetchApproval();
           setShowApprovalPrompt(false);
+          setIsNftModalOpen(false);
         },
         onError: () => {
           setShowApprovalPrompt(false);
+          setIsNftModalOpen(false);
         },
       });
     }
@@ -286,6 +288,7 @@ function BetASketchy() {
       setShowApprovalPrompt(true);
     } else {
       setShowApprovalPrompt(false);
+      setIsNftModalOpen(false);
     }
   };
 
