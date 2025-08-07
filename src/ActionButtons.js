@@ -75,7 +75,7 @@ function ActionButtons({
       </button>
       {showWaitMessage && (
         <p className="text-yellow-500 text-sm text-center status-pulse">
-          Please wait for the approval to confirm.
+          Please wait for the approval to confirm.or refresh page!
         </p>
       )}
       <button
