@@ -14,24 +14,23 @@ function ActionButtons({
   handleApproveAll,
   isApproving,
 }) {
+  const handleSelectClick = () => {
+    if (isApproved) {
+      setIsNftModalOpen(true);
+    } else {
+      handleApproveAll();
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      {isApproved ? (
-        <button
-          className="neon-button"
-          onClick={() => setIsNftModalOpen(true)}
-        >
-          Select a Sketchy
-        </button>
-      ) : (
-        <button
-          className="neon-button"
-          onClick={handleApproveAll}
-          disabled={isApproving}
-        >
-          {isApproving ? 'Approving...' : 'Approve Contract'}
-        </button>
-      )}
+      <button
+        className="neon-button"
+        onClick={handleSelectClick}
+        disabled={isApproving}
+      >
+        {isApproving ? 'Approving...' : 'Select a Sketchy'}
+      </button>
       <button
         className="neon-button"
         onClick={handleCreateGame}
