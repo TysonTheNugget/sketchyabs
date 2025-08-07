@@ -58,7 +58,7 @@ function App() {
       />
       {location.pathname === '/' && (
         <>
-          <h1 className="text-3xl font-bold mb-8">Mymilio dApps</h1>
+          <h1 className="neon-text text-xl mb-2">Mymilio dApps</h1>
           {navigateError && <p className="text-red-500 mb-4 status-pulse">{navigateError}</p>}
           <div className="space-y-4">
             <Link to="/bet-a-sketchy">
