@@ -8,6 +8,5 @@
     { "source": "/betasketchy", "destination": "/index.html" },
     { "source": "/daycare", "destination": "/daycare.html" },
     { "source": "/info", "destination": "/moreinfo.html" }
-  ],
-  "ignoreCommand": "echo 'no ignored files'"
+  ]
 }
