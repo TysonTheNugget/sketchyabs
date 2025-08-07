@@ -373,6 +373,7 @@ function BetASketchy() {
           setIsNftModalOpen={setIsNftModalOpen}
           handleApproveAll={handleApproveAll}
           isApproving={isApproving}
+		  refetchTokenIds={refetchTokenIds}
         />
         <OpenGames
           openGameIds={openGameIds}

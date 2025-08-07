@@ -13,6 +13,7 @@ function ActionButtons({
   setIsNftModalOpen,
   handleApproveAll,
   isApproving,
+  refetchTokenIds, // New prop to trigger NFT fetch
 }) {
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
   const [approvalPending, setApprovalPending] = useState(false);
@@ -33,8 +34,9 @@ function ActionButtons({
     }
   }, [showWaitMessage]);
 
-  const handleSelectClick = () => {
+  const handleSelectClick = async () => {
     if (isApproved) {
+      await refetchTokenIds(); // Fetch latest NFTs before opening modal
       setIsNftModalOpen(true);
     } else if (approvalPending) {
       setShowWaitMessage(true);
@@ -43,6 +45,7 @@ function ActionButtons({
       setApprovalPending(true);
       setIsWaitingForApproval(true);
       setTimeout(() => setIsWaitingForApproval(false), 8000);
+      // Optionally fetch after approval, but primary fetch is on next click
     }
   };
 
@@ -75,7 +78,7 @@ function ActionButtons({
       </button>
       {showWaitMessage && (
         <p className="text-yellow-500 text-sm text-center status-pulse">
-          Please wait for the approval to confirm.or refresh page!
+          Please wait for the approval to confirm.
         </p>
       )}
       <button
