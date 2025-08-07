@@ -24,7 +24,9 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "typescript": "^5.0.4"
+    "ajv": "^6.12.6",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,7 +37,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:react/recommended"
     ]
   },
   "browserslist": {
@@ -49,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
