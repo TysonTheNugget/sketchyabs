@@ -107,11 +107,9 @@ function BetASketchy() {
         onSuccess: () => {
           refetchApproval();
           setShowApprovalPrompt(false);
-          setIsNftModalOpen(false);
         },
         onError: () => {
           setShowApprovalPrompt(false);
-          setIsNftModalOpen(false);
         },
       });
     }
@@ -288,7 +286,6 @@ function BetASketchy() {
       setShowApprovalPrompt(true);
     } else {
       setShowApprovalPrompt(false);
-      setIsNftModalOpen(false);
     }
   };
 
@@ -374,6 +371,8 @@ function BetASketchy() {
           handleCreateGame={handleCreateGame}
           handleRefreshGames={handleRefreshGames}
           setIsNftModalOpen={setIsNftModalOpen}
+          handleApproveAll={handleApproveAll}
+          isApproving={isApproving}
         />
         <OpenGames
           openGameIds={openGameIds}
