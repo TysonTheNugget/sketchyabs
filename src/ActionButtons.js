@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 function ActionButtons({
   isConnected,
@@ -14,22 +14,49 @@ function ActionButtons({
   handleApproveAll,
   isApproving,
 }) {
+  const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
+
+  useEffect(() => {
+    if (isWaitingForApproval && isApproved) {
+      setIsWaitingForApproval(false);
+    }
+  }, [isApproved, isWaitingForApproval]);
+
   const handleSelectClick = () => {
     if (isApproved) {
       setIsNftModalOpen(true);
     } else {
       handleApproveAll();
+      setIsWaitingForApproval(true);
+    }
+  };
+
+  const getSelectButtonContent = () => {
+    if (isApproving) {
+      return (
+        <>
+          <span className="game-spinner mr-1"></span>Approving...
+        </>
+      );
+    } else if (isWaitingForApproval) {
+      return (
+        <>
+          <span className="game-spinner mr-1"></span>Waiting for Approval...
+        </>
+      );
+    } else {
+      return 'Select a Sketchy';
     }
   };
 
   return (
     <div className="flex flex-col gap-2">
       <button
-        className="neon-button"
+        className="neon-button flex items-center justify-center"
         onClick={handleSelectClick}
-        disabled={isApproving}
+        disabled={isApproving || isWaitingForApproval}
       >
-        {isApproving ? 'Approving...' : 'Select a Sketchy'}
+        {getSelectButtonContent()}
       </button>
       <button
         className="neon-button"
