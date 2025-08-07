@@ -15,19 +15,34 @@ function ActionButtons({
   isApproving,
 }) {
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
+  const [approvalPending, setApprovalPending] = useState(false);
+  const [showWaitMessage, setShowWaitMessage] = useState(false);
 
   useEffect(() => {
-    if (isWaitingForApproval && isApproved) {
+    if (isApproved) {
+      setApprovalPending(false);
       setIsWaitingForApproval(false);
+      setShowWaitMessage(false);
     }
-  }, [isApproved, isWaitingForApproval]);
+  }, [isApproved]);
+
+  useEffect(() => {
+    if (showWaitMessage) {
+      const timer = setTimeout(() => setShowWaitMessage(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWaitMessage]);
 
   const handleSelectClick = () => {
     if (isApproved) {
       setIsNftModalOpen(true);
+    } else if (approvalPending) {
+      setShowWaitMessage(true);
     } else {
       handleApproveAll();
+      setApprovalPending(true);
       setIsWaitingForApproval(true);
+      setTimeout(() => setIsWaitingForApproval(false), 8000);
     }
   };
 
@@ -58,6 +73,11 @@ function ActionButtons({
       >
         {getSelectButtonContent()}
       </button>
+      {showWaitMessage && (
+        <p className="text-yellow-500 text-sm text-center status-pulse">
+          Please wait for the approval to confirm.
+        </p>
+      )}
       <button
         className="neon-button"
         onClick={handleCreateGame}
