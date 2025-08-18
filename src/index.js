@@ -7,11 +7,15 @@ import { abstract } from 'viem/chains';
 import { WagmiProvider, createConfig, fallback, http, webSocket } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
+import { injected } from 'wagmi/connectors'; // Add injected connector for MetaMask
 
 const queryClient = new QueryClient();
 
 const wagmiConfig = createConfig({
   chains: [abstract],
+  connectors: [
+    injected({ target: 'metaMask' }), // Add MetaMask connector
+  ],
   transports: {
     [abstract.id]: fallback([
       webSocket('wss://abstract-mainnet.public.blastapi.io'),

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useLoginWithAbstract } from '@abstract-foundation/agw-react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useConnect } from 'wagmi';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import BetASketchy from './BetASketchy';
 import Daycare from './Daycare';
+import { injected } from 'wagmi/connectors'; // Add injected connector for MetaMask
 
-function NavBar({ isConnected, address, handleConnect, handleDisconnect, location }) {
+function NavBar({ isConnected, address, handleConnect, handleDisconnect, handleConnectMetaMask, location }) {
   return (
     <div id="gameInterface" className="flex justify-between items-center mb-8">
       {location.pathname !== '/' && (
@@ -16,12 +17,30 @@ function NavBar({ isConnected, address, handleConnect, handleDisconnect, locatio
         </Link>
       )}
       <div className="flex-1"></div>
-      <button
-        className="neon-button"
-        onClick={isConnected ? handleDisconnect : handleConnect}
-      >
-        {isConnected ? `Disconnect: ${address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '...'}` : 'Connect Wallet'}
-      </button>
+      <div className="flex space-x-2">
+        <button
+          className="neon-button"
+          onClick={handleConnect}
+          disabled={isConnected}
+        >
+          Connect Abstract Wallet
+        </button>
+        <button
+          className="neon-button"
+          onClick={handleConnectMetaMask}
+          disabled={isConnected}
+        >
+          Connect MetaMask
+        </button>
+        {isConnected && (
+          <button
+            className="neon-button"
+            onClick={handleDisconnect}
+          >
+            Disconnect: {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '...'}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -30,6 +49,7 @@ function App() {
   const { login } = useLoginWithAbstract();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { connect } = useConnect();
   const [navigateError, setNavigateError] = useState(null);
   const location = useLocation();
 
@@ -38,7 +58,52 @@ function App() {
       await login();
       setNavigateError(null);
     } catch {
-      setNavigateError('Failed to connect wallet. Please try again.');
+      setNavigateError('Failed to connect Abstract Wallet. Please try again.');
+    }
+  };
+
+  const handleConnectMetaMask = async () => {
+    try {
+      // Ensure MetaMask is installed
+      if (!window.ethereum) {
+        setNavigateError('MetaMask is not installed. Please install MetaMask and try again.');
+        return;
+      }
+
+      // Check if Abstract chain is added to MetaMask
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: `0x${abstract.id.toString(16)}` }],
+        });
+      } catch (switchError) {
+        // If chain is not added, add it
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: `0x${abstract.id.toString(16)}`,
+                chainName: 'Abstract',
+                rpcUrls: ['https://abstract-mainnet.public.blastapi.io'],
+                nativeCurrency: {
+                  name: 'Ether',
+                  symbol: 'ETH',
+                  decimals: 18,
+                },
+                blockExplorerUrls: ['https://abscan.org'],
+              },
+            ],
+          });
+        } else {
+          throw switchError;
+        }
+      }
+
+      await connect({ connector: injected({ target: 'metaMask' }) });
+      setNavigateError(null);
+    } catch (error) {
+      setNavigateError('Failed to connect MetaMask. Please try again.');
     }
   };
 
@@ -54,6 +119,7 @@ function App() {
         address={address}
         handleConnect={handleConnect}
         handleDisconnect={handleDisconnect}
+        handleConnectMetaMask={handleConnectMetaMask}
         location={location}
       />
       {location.pathname === '/' && (
