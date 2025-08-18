@@ -5,6 +5,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import BetASketchy from './BetASketchy';
 import Daycare from './Daycare';
 import { injected } from 'wagmi/connectors'; // Add injected connector for MetaMask
+import { abstract } from 'viem/chains'; // Import abstract chain
 
 function NavBar({ isConnected, address, handleConnect, handleDisconnect, handleConnectMetaMask, location }) {
   return (
