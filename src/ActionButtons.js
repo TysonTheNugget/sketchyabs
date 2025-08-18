@@ -13,7 +13,7 @@ function ActionButtons({
   setIsNftModalOpen,
   handleApproveAll,
   isApproving,
-  refetchTokenIds, // New prop to trigger NFT fetch
+  refetchTokenIds,
 }) {
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
   const [approvalPending, setApprovalPending] = useState(false);
@@ -36,7 +36,7 @@ function ActionButtons({
 
   const handleSelectClick = async () => {
     if (isApproved) {
-      await refetchTokenIds(); // Fetch latest NFTs before opening modal
+      await refetchTokenIds();
       setIsNftModalOpen(true);
     } else if (approvalPending) {
       setShowWaitMessage(true);
@@ -45,7 +45,6 @@ function ActionButtons({
       setApprovalPending(true);
       setIsWaitingForApproval(true);
       setTimeout(() => setIsWaitingForApproval(false), 8000);
-      // Optionally fetch after approval, but primary fetch is on next click
     }
   };
 
@@ -68,7 +67,7 @@ function ActionButtons({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full max-w-sm">
       <button
         className="neon-button flex items-center justify-center"
         onClick={handleSelectClick}
@@ -99,13 +98,13 @@ function ActionButtons({
           <img
             src={`https://f005.backblazeb2.com/file/sketchymilios/${selectedNft}.png`}
             alt={`Mymilio #${selectedNft}`}
-            className="w-16 h-16 object-contain rounded"
+            className="w-12 h-12 object-contain rounded"
             loading="lazy"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/32x32?text=NF';
             }}
           />
-          <p className="mt-1" style={{ color: "#222" }}>
+          <p className="mt-1 text-sm" style={{ color: "#222" }}>
             Mymilio #{selectedNft.toString()}
           </p>
         </div>
