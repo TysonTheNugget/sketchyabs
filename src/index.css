@@ -1,7 +1,8 @@
 html, body {
     height: 100%;
     margin: 0;
-    overflow-y: auto; /* Enable scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 body {
     background-image: url('/background.jpg');
@@ -20,18 +21,31 @@ body {
 @media (max-width: 768px) {
     html, body {
         overflow-y: auto;
+        overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
         touch-action: manipulation; /* Prevent pinch zooming and double-tap zoom */
+        width: 100vw; /* Ensure full viewport width */
+        max-width: 100vw; /* Prevent content from exceeding viewport */
     }
     #gameInterface {
         max-width: 100vw;
         padding: 0.5rem;
+        box-sizing: border-box; /* Ensure padding doesn't cause overflow */
     }
     .game-card {
         padding: 1rem;
+        max-width: 100%; /* Prevent overflow */
     }
     .modal-content {
         margin: 10% auto;
         padding: 1rem;
+        max-width: 90vw; /* Ensure modal fits within viewport */
+        box-sizing: border-box;
+    }
+    /* Ensure wallet modals or iframes don't cause overflow */
+    .modal, iframe, [id*="wallet"], [class*="wallet"] {
+        max-width: 100vw !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
     }
 }
 @media (max-width: 480px) {
@@ -44,9 +58,11 @@ body {
     }
     .game-card {
         padding: 0.75rem;
+        max-width: 100%; /* Prevent overflow */
     }
     #gameInterface {
         padding: 0.5rem;
+        max-width: 100vw;
     }
 }
 .neon-button {
