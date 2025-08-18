@@ -18,7 +18,10 @@ body {
     color: #fff;
 }
 @media (max-width: 768px) {
-    html, body {
+    body {
+        background-attachment: scroll;  /* iOS-safe override */
+    }	
+	html, body {
         overflow-y: auto;
         touch-action: manipulation; /* Prevent pinch zooming and double-tap zoom */
     }
