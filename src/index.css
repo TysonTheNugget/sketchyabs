@@ -35,9 +35,8 @@ body {
 }
 @media (max-width: 480px) {
     .neon-button {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-        line-height: 1.2;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
     }
     .game-card {
         padding: 0.75rem;
@@ -50,29 +49,19 @@ body {
     background: linear-gradient(to bottom, #ffeb3b, #ffc107);
     color: black;
     font-weight: bold;
-    border-radius: 0.75rem;
-    padding: 0.5rem 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     border: none;
     cursor: pointer;
     pointer-events: auto;
     -webkit-font-smoothing: antialiased;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
-    width: 100%;
-    height: 36px;
-    line-height: 1.2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 .neon-button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 3px 6px rgba(255, 152, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4), inset 0 1px 0 rgba(02, 255, 255, 0.6);
 }
 .neon-button:disabled {
     opacity: 0.5;
@@ -268,26 +257,15 @@ body {
     font-weight: bold;
     border-radius: 0.75rem;
     padding: 0.5rem 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     z-index: 80;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     pointer-events: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
-    width: 100%;
-    height: 36px;
-    line-height: 1.2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
 }
 #resultsButton:hover {
-    transform: scale(1.03);
-    box-shadow: 0 3px 6px rgba(255, 69, 0, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 69, 0, 0.5);
 }
 #resultsNotification {
     position: absolute;
@@ -347,13 +325,13 @@ body {
     background: linear-gradient(to bottom, #ffeb3b, #ffc107);
     color: #222;
     font-weight: bold;
-    border-radius: 0.75rem;
-    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.13);
     margin: 0.5rem 0;
     border: 1px solid #ff9800;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 .bg-image-box {
     background-image: url('/background2.jpg');
