@@ -31,7 +31,7 @@ function NavBar({ isConnected, address, handleConnectAbstract, handleConnectInje
           onClick={handleConnectInjected}
           disabled={isConnected}
         >
-          Connect Wallet (MetaMask, Rabby, etc.)
+          Mobile Wallet 
         </button>
         {isConnected && (
           <button
