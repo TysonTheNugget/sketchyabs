@@ -35,7 +35,7 @@ function NavBar({ isConnected, address, handleConnectAbstract, handleConnectInje
         </button>
         {isConnected && (
           <button
-            className="neon-button"
+            className="hidden"
             onClick={handleDisconnect}
           >
             Disconnect: {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '...'}
