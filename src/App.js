@@ -4,10 +4,10 @@ import { useAccount, useDisconnect, useConnect } from 'wagmi';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import BetASketchy from './BetASketchy';
 import Daycare from './Daycare';
-import { injected } from 'wagmi/connectors'; // Add injected connector for MetaMask
-import { abstract } from 'viem/chains'; // Import abstract chain
+import { injected } from 'wagmi/connectors'; // Injected connector for MetaMask, Rabby, etc.
+import { abstract } from 'viem/chains'; // Abstract chain
 
-function NavBar({ isConnected, address, handleConnect, handleDisconnect, handleConnectMetaMask, location }) {
+function NavBar({ isConnected, address, handleConnectAbstract, handleConnectInjected, handleDisconnect, location }) {
   return (
     <div id="gameInterface" className="flex justify-between items-center mb-8">
       {location.pathname !== '/' && (
@@ -21,17 +21,17 @@ function NavBar({ isConnected, address, handleConnect, handleDisconnect, handleC
       <div className="flex space-x-2">
         <button
           className="neon-button"
-          onClick={handleConnect}
+          onClick={handleConnectAbstract}
           disabled={isConnected}
         >
           Connect Abstract Wallet
         </button>
         <button
           className="neon-button"
-          onClick={handleConnectMetaMask}
+          onClick={handleConnectInjected}
           disabled={isConnected}
         >
-          Connect MetaMask
+          Connect Wallet (MetaMask, Rabby, etc.)
         </button>
         {isConnected && (
           <button
@@ -54,7 +54,7 @@ function App() {
   const [navigateError, setNavigateError] = useState(null);
   const location = useLocation();
 
-  const handleConnect = async () => {
+  const handleConnectAbstract = async () => {
     try {
       await login();
       setNavigateError(null);
@@ -63,48 +63,55 @@ function App() {
     }
   };
 
-  const handleConnectMetaMask = async () => {
+  const handleConnectInjected = async () => {
     try {
-      // Ensure MetaMask is installed
+      // Ensure an injected wallet is available
       if (!window.ethereum) {
-        setNavigateError('MetaMask is not installed. Please install MetaMask and try again.');
+        setNavigateError('No wallet detected. Please install MetaMask, Rabby, or another compatible wallet.');
         return;
       }
 
-      // Check if Abstract chain is added to MetaMask
+      // Check if Abstract chain is added to the wallet
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: `0x${abstract.id.toString(16)}` }],
         });
       } catch (switchError) {
-        // If chain is not added, add it
+        // If chain is not added (error code 4902), add it
         if (switchError.code === 4902) {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: `0x${abstract.id.toString(16)}`,
-                chainName: 'Abstract',
-                rpcUrls: ['https://abstract-mainnet.public.blastapi.io'],
-                nativeCurrency: {
-                  name: 'Ether',
-                  symbol: 'ETH',
-                  decimals: 18,
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: `0x${abstract.id.toString(16)}`,
+                  chainName: 'Abstract',
+                  rpcUrls: ['https://abstract-mainnet.public.blastapi.io'],
+                  nativeCurrency: {
+                    name: 'Ether',
+                    symbol: 'ETH',
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ['https://abscan.org'],
                 },
-                blockExplorerUrls: ['https://abscan.org'],
-              },
-            ],
-          });
+              ],
+            });
+          } catch (addError) {
+            setNavigateError('Failed to add Abstract chain. Please add it manually in your wallet.');
+            return;
+          }
         } else {
-          throw switchError;
+          setNavigateError('Failed to switch to Abstract chain. Please try again.');
+          return;
         }
       }
 
-      await connect({ connector: injected({ target: 'metaMask' }) });
+      // Connect using the injected connector
+      await connect({ connector: injected() });
       setNavigateError(null);
     } catch (error) {
-      setNavigateError('Failed to connect MetaMask. Please try again.');
+      setNavigateError('Failed to connect wallet. Ensure your wallet is unlocked and try again.');
     }
   };
 
@@ -118,9 +125,9 @@ function App() {
       <NavBar
         isConnected={isConnected}
         address={address}
-        handleConnect={handleConnect}
+        handleConnectAbstract={handleConnectAbstract}
+        handleConnectInjected={handleConnectInjected}
         handleDisconnect={handleDisconnect}
-        handleConnectMetaMask={handleConnectMetaMask}
         location={location}
       />
       {location.pathname === '/' && (
