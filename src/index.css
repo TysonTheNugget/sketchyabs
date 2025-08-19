@@ -72,6 +72,30 @@ body {
     border: 2px solid #22c55e;
 }
 
+.staked-nft-card {
+    background: linear-gradient(to bottom, #ffeb3b, #ffc107); /* Match yellow-info */
+    border-radius: 0.75rem;
+    border: 1px solid #ff9800;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem;
+    width: 100%;
+    max-width: 300px; /* Compact size */
+    margin: 0 auto; /* Center card */
+    text-align: center;
+    overflow-x: hidden; /* Prevent overflow */
+    transition: transform 0.2s ease;
+}
+
+.staked-nft-card:hover {
+    transform: scale(1.03); /* Slight hover effect for game-like feel */
+}
+
+.tiny-button {
+    padding: 0.25rem 0.75rem; /* Smaller buttons */
+    font-size: 0.75rem; /* Smaller text */
+    border-radius: 0.5rem; /* Rounded corners */
+}
+
 .modal {
     position: fixed;
     z-index: 50;
