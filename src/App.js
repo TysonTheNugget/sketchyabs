@@ -18,7 +18,7 @@ function NavBar({ isConnected, address, handleConnectAbstract, handleConnectInje
         </Link>
       )}
       <div className="flex-1"></div>
-      <div className="flex space-x-2">
+      <div className="flex flex-col space-y-2"> {/* Changed from flex space-x-2 to flex flex-col space-y-2 */}
         <button
           className="neon-button"
           onClick={handleConnectAbstract}
