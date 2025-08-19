@@ -653,31 +653,37 @@ function Daycare() {
             enhancedDaycares.map((d, index) => (
               <div
                 key={index}
-                className="staked-nft-card flex flex-col items-center p-3 rounded-lg"
+                className="staked-nft-card flex flex-row items-center p-3 rounded-lg"
               >
-                <img
-                  src={`https://f005.backblazeb2.com/file/sketchymilios/${d.tokenId}.png`}
-                  alt={`Mymilio #${d.tokenId}`}
-                  className="w-16 h-16 object-contain rounded mb-2"
-                  loading="lazy"
-                  onError={() => handleImageError(d.tokenId.toString())}
-                />
-                {imageErrors[d.tokenId] && (
-                  <p className="text-red-500 text-xs text-center">
-                    Image failed
+                <div className="flex-shrink-0">
+                  <img
+                    src={`https://f005.backblazeb2.com/file/sketchymilios/${d.tokenId}.png`}
+                    alt={`Mymilio #${d.tokenId}`}
+                    className="w-12 h-12 object-contain rounded"
+                    loading="lazy"
+                    onError={() => handleImageError(d.tokenId.toString())}
+                  />
+                  {imageErrors[d.tokenId] && (
+                    <p className="text-red-500 text-xs text-center">
+                      Image failed
+                    </p>
+                  )}
+                </div>
+                <div className="flex-grow pl-3">
+                  <p className="text-white text-xs font-bold">
+                    Mymilio #{d.tokenId}
                   </p>
-                )}
-                <p className="text-white text-xs font-bold">
-                  Mymilio #{d.tokenId}
-                </p>
-                <p className="text-white text-xs">Daycared on: {d.stakedAt}</p>
-                <p className="text-white text-xs">
-                  Pending Points: {d.pending}
-                </p>
-                <div className="flex justify-center gap-2 mt-2">
+                  <p className="text-white text-xs">
+                    Daycared on: {d.stakedAt}
+                  </p>
+                  <p className="text-white text-xs">
+                    Pending Points: {d.pending}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1">
                   {parseInt(d.pending) > 0 && (
                     <button
-                      className="neon-button tiny-button"
+                      className="neon-button micro-button"
                       onClick={() => handleClaimSingle(index)}
                       disabled={isClaiming || !isConnected}
                     >
@@ -685,7 +691,7 @@ function Daycare() {
                     </button>
                   )}
                   <button
-                    className="neon-button tiny-button"
+                    className="neon-button micro-button"
                     onClick={() => handlePickUpSingle(index)}
                     disabled={
                       parseInt(d.pending) > 0 || isWithdrawing || !isConnected

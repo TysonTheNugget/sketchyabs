@@ -77,11 +77,10 @@ body {
     border-radius: 0.75rem;
     border: 1px solid #ff9800;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    padding: 0.75rem;
+    padding: 0.5rem; /* Reduced padding for compact look */
     width: 100%;
-    max-width: 300px; /* Compact size */
+    max-width: 400px; /* Wider for rectangular shape */
     margin: 0 auto; /* Center card */
-    text-align: center;
     overflow-x: hidden; /* Prevent overflow */
     transition: transform 0.2s ease;
 }
@@ -94,6 +93,12 @@ body {
     padding: 0.25rem 0.75rem; /* Smaller buttons */
     font-size: 0.75rem; /* Smaller text */
     border-radius: 0.5rem; /* Rounded corners */
+}
+
+.micro-button {
+    padding: 0.2rem 0.5rem; /* Even smaller buttons */
+    font-size: 0.65rem; /* Smaller text */
+    border-radius: 0.4rem; /* Slightly smaller corners */
 }
 
 .modal {
