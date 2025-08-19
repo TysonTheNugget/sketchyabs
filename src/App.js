@@ -18,24 +18,27 @@ function NavBar({ isConnected, address, handleConnectAbstract, handleConnectInje
         </Link>
       )}
       <div className="flex-1"></div>
-      <div className="flex flex-col space-y-2"> {/* Changed from flex space-x-2 to flex flex-col space-y-2 */}
-        <button
-          className="neon-button"
-          onClick={handleConnectAbstract}
-          disabled={isConnected}
-        >
-          Connect Abstract Wallet
-        </button>
-        <button
-          className="neon-button"
-          onClick={handleConnectInjected}
-          disabled={isConnected}
-        >
-          Mobile Wallet 
-        </button>
-        {isConnected && (
+      <div className="flex flex-col space-y-2">
+        {!isConnected ? (
+          <>
+            <button
+              className="neon-button"
+              onClick={handleConnectAbstract}
+              disabled={isConnected}
+            >
+              Connect Abstract Wallet
+            </button>
+            <button
+              className="neon-button"
+              onClick={handleConnectInjected}
+              disabled={isConnected}
+            >
+              Mobile Wallet
+            </button>
+          </>
+        ) : (
           <button
-            className="hidden"
+            className="neon-button"
             onClick={handleDisconnect}
           >
             Disconnect: {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '...'}
